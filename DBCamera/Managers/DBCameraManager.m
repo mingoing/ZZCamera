@@ -129,7 +129,6 @@
     
     [videoConnection setVideoScaleAndCropFactor:_maxScale];
     
-    __weak AVCaptureSession *captureSessionBlock = _captureSession;
     __weak id<DBCameraManagerDelegate>delegateBlock = _delegate;
     
    #if TARGET_IPHONE_SIMULATOR
@@ -138,6 +137,7 @@
         [delegateBlock captureImageDidFinish:mockImage withMetadata:nil];
     }
    #else
+    __weak AVCaptureSession *captureSessionBlock = _captureSession;
     [_stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection
                                                   completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
          [captureSessionBlock stopRunning];

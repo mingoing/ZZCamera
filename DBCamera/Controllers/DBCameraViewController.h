@@ -60,6 +60,11 @@
 @property (nonatomic, assign) NSUInteger libraryMaxImageSize;
 
 /**
+ *  Set the session preset for capture session
+ */
+@property (nonatomic, assign) NSString *sessionPreset;
+
+/**
  *  The init class method with a DBCameraViewControllerDelegate
  *
  *  @param delegate The DBCameraViewControllerDelegate
