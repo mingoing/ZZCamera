@@ -14,6 +14,10 @@
 @interface DBCameraManager () {
     AVCaptureStillImageOutput *_stillImageOutput;
     CGFloat _maxScale;
+    
+    // for targetResolution
+    NSArray *_presets;
+    NSDictionary *_possibleResolutions;
 }
 
 - (AVCaptureDevice *) cameraWithPosition:(AVCaptureDevicePosition)position;
@@ -64,9 +68,89 @@
     _stillImageOutput = nil;
 }
 
+- (NSString *)bestSuitedSessionPresetForResolution:(CGSize)targetResolution {
+    // Not set?
+    if ( CGSizeEqualToSize(targetResolution, CGSizeZero) ) {
+        return AVCaptureSessionPresetPhoto;
+    }
+    #if TARGET_IPHONE_SIMULATOR
+    return AVCaptureSessionPresetPhoto;
+    #endif
+
+    
+    // Make sure to have a portrait size
+    CGSize target = targetResolution.width >= targetResolution.height ?
+    targetResolution : CGSizeMake(targetResolution.height,
+                                  targetResolution.width);
+    
+    // Try different resolutions
+    NSString *preset;
+    NSArray *resolutions = [self availableResolutionsForCurrentDevice];
+    CGSize resolution;
+    for (preset in resolutions) {
+        resolution = [(NSValue *)_possibleResolutions[preset] CGSizeValue];
+        if ((resolution.width >= target.width) && (resolution.height >= target.height)) {
+            break;
+        }
+    }
+    
+    return preset;
+}
+
+#define sizeObject(width, height)                                              \
+[NSValue valueWithCGSize:CGSizeMake(width, height)]
+
+- (NSArray *)availableResolutionsForCurrentDevice {
+    if (!_videoInput) {
+        _videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self backCamera] error:nil];
+    }
+    AVCaptureDevice *_currentDevice = _videoInput.device;
+    
+    // Possible resolutions
+    _presets = @[
+                AVCaptureSessionPresetLow,
+                AVCaptureSessionPreset352x288,
+                AVCaptureSessionPresetMedium,
+                AVCaptureSessionPreset640x480,
+                AVCaptureSessionPresetiFrame960x540,
+                AVCaptureSessionPreset1280x720,
+                AVCaptureSessionPreset1920x1080,
+                AVCaptureSessionPresetPhoto
+                ];
+    _possibleResolutions = @{
+                            AVCaptureSessionPresetLow : sizeObject(192.0, 144.0),           // iOS4+
+                            AVCaptureSessionPreset352x288 : sizeObject(352.0, 288.0),       // iOS5+
+                            AVCaptureSessionPresetMedium : sizeObject(480.0, 360.0),        // iOS4+,
+                            AVCaptureSessionPreset640x480 : sizeObject(640.0, 480.0),       // iOS4+
+                            AVCaptureSessionPresetiFrame960x540 : sizeObject(960.0, 540.0), // iOS5+
+                            AVCaptureSessionPreset1280x720 : sizeObject(1280.0, 720.0),     // iOS4+
+                            AVCaptureSessionPreset1920x1080 : sizeObject(1920.0, 1080.0),   // iOS5+
+                            AVCaptureSessionPresetPhoto : sizeObject(CGFLOAT_MAX, CGFLOAT_MAX)
+                            }; // iOS4+, Full resolution
+    
+    // Resolutions available for the current device
+    NSMutableArray *availableResolutions = [[NSMutableArray alloc] init];;
+    for (NSString *preset in _presets) {
+        if ([_currentDevice supportsAVCaptureSessionPreset:preset]) {
+            [availableResolutions addObject:preset];
+        }
+    }
+    
+    return availableResolutions;
+}
+
+- (BOOL) setupBestSuitedSessionPresetForResolution:(CGSize)targetResolution error:(NSError **)error
+{
+    NSString *preset = [self bestSuitedSessionPresetForResolution:self.targetResolution];
+    return [self setupSessionWithPreset:preset error:error];
+}
+
+
 - (BOOL) setupSessionWithPreset:(NSString *)sessionPreset error:(NSError **)error
 {
-    _videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self backCamera] error:error];
+    if (!_videoInput) {
+        _videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self backCamera] error:error];
+    }
     
     _stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
     [_stillImageOutput setOutputSettings:@{ AVVideoCodecKey : AVVideoCodecJPEG }];

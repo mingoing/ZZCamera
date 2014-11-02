@@ -90,7 +90,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
                                                  name:UIApplicationDidEnterBackgroundNotification object:nil];
 
     NSError *error;
-    if ( [self.cameraManager setupSessionWithPreset:_sessionPreset ? _sessionPreset : AVCaptureSessionPresetPhoto error:&error] ) {
+    if ( [self.cameraManager setupBestSuitedSessionPresetForResolution:self.cameraManager.targetResolution error:&error] ) {
         if ( self.customCamera ) {
             if ( [self.customCamera respondsToSelector:@selector(previewLayer)] ) {
                 [(AVCaptureVideoPreviewLayer *)[self.customCamera valueForKey:@"previewLayer"] setSession:self.cameraManager.captureSession];

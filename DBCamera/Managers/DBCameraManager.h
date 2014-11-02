@@ -60,6 +60,11 @@
 @property (nonatomic, assign, readonly) NSUInteger cameraCount;
 
 /**
+ *  Set the resolution for capture session
+ */
+@property (nonatomic)  CGSize targetResolution;
+
+/**
  *  Set the camera max scale
  *
  *  @param maxScale The max scale value
@@ -131,6 +136,17 @@
  *  @return BOOL value indicates if the setup is ok
  */
 - (BOOL) setupSessionWithPreset:(NSString *)sessionPreset error:(NSError **)error;
+
+/**
+ *  Set the best session for the DBCamera
+ *
+ *  @param targetResolution The camera target resolution
+ *  @param error         The error used by the device input init
+ *
+ *  @return BOOL value indicates if the setup is ok
+ */
+
+- (BOOL) setupBestSuitedSessionPresetForResolution:(CGSize)targetResolution error:(NSError **)error;
 
 /**
  *  Start recording
