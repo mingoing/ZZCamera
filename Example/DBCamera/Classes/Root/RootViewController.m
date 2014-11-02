@@ -11,6 +11,7 @@
 #import "DBCameraContainerViewController.h"
 #import "DBCameraLibraryViewController.h"
 #import "CustomCamera.h"
+#import "DBCameraManager.h"
 #import "DBCameraGridView.h"
 
 @interface DetailViewController : UIViewController {
@@ -65,7 +66,7 @@
 
 typedef void (^TableRowBlock)();
 
-@interface RootViewController () <DBCameraViewControllerDelegate, UITableViewDataSource, UITableViewDelegate> {
+@interface RootViewController () <DBCameraViewControllerDelegate,DBCameraViewDelegate,DBCameraManagerDelegate, UITableViewDataSource, UITableViewDelegate> {
     UITableView *_tableView;
     NSDictionary *_actionMapping;
 }
@@ -154,6 +155,7 @@ typedef void (^TableRowBlock)();
 {
     CustomCamera *camera = [CustomCamera initWithFrame:[[UIScreen mainScreen] bounds]];
     [camera buildInterface];
+    camera.delegate = self;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraViewController alloc] initWithDelegate:self cameraView:camera]];
     [nav setNavigationBarHidden:YES];
@@ -163,6 +165,7 @@ typedef void (^TableRowBlock)();
 - (void) openCameraWithoutSegue
 {
     DBCameraViewController *cameraController = [DBCameraViewController initWithDelegate:self];
+    cameraController.cameraManager.targetResolution = [[UIScreen mainScreen] bounds].size;
     [cameraController setUseCameraSegue:NO];
 //    [cameraController setLibraryMaxImageSize:1280]; //You can set a value for the maximum output resolution for the image selected from the Library
     
@@ -248,5 +251,16 @@ typedef void (^TableRowBlock)();
     [cameraViewController restoreFullScreenMode];
     [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
 }
+
+
+- (void)cameraViewStartRecording
+{
+    NSLog(@"start recording");
+}
+- (void)captureSessionDidStartRunning
+{
+    NSLog(@"captureSessionDidStartRunning");
+}
+
 
 @end
