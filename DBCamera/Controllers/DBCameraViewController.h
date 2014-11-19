@@ -85,4 +85,7 @@
  *  @return A DBCameraViewController
  */
 - (instancetype) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate cameraView:(id)camera;
+
+@property (strong) BOOL (^startRunningWhenviewDidAppearBlock)();
+
 @end
