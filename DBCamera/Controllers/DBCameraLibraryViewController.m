@@ -218,11 +218,19 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 
 - (void) close
 {
+    // push self
+    
+    if (self.navigationController.viewControllers.count > 1) {
+        [self.navigationController popViewControllerAnimated:YES];
+        return;
+    }
+    
     if ( !self.containerDelegate ) {
         [self dismissViewControllerAnimated:YES completion:nil];
         return;
     }
-        
+    
+    
     [UIView animateWithDuration:.3 animations:^{
         [self.view setAlpha:0];
         [self.view setTransform:CGAffineTransformMakeScale(.8, .8)];
@@ -263,7 +271,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         _titleLabel = [[UILabel alloc] initWithFrame:(CGRect){ CGRectGetMaxX(closeButton.frame), 0, CGRectGetWidth(self.view.bounds) - (CGRectGetWidth(closeButton.bounds) * 2), CGRectGetHeight(_topContainerBar.bounds) }];
         [_titleLabel setBackgroundColor:[UIColor clearColor]];
         [_titleLabel setTextColor:self.tintColor];
-        [_titleLabel setFont:[UIFont systemFontOfSize:12]];
+        [_titleLabel setFont:[UIFont systemFontOfSize:17]];
         [_titleLabel setTextAlignment:NSTextAlignmentCenter];
         [_topContainerBar addSubview:_titleLabel];
     }
