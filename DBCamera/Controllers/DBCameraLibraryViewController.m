@@ -62,7 +62,6 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         _containerDelegate = delegate;
         _containersMapping = [NSMutableDictionary dictionary];
         _items = [NSMutableArray array];
-        _libraryMaxImageSize = 1900;
         
         [self setTintColor:[UIColor whiteColor]];
     }
@@ -345,8 +344,13 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
             ALAssetRepresentation *defaultRep = [asset defaultRepresentation];
             NSMutableDictionary *metadata = [NSMutableDictionary dictionaryWithDictionary:[defaultRep metadata]];
             metadata[@"DBCameraSource"] = @"Library";
-            
-            UIImage *image = [UIImage imageForAsset:asset maxPixelSize:_libraryMaxImageSize];
+            UIImage *image;
+            if (!_libraryMaxImageSize) {
+                 image = [[UIImage alloc] initWithCGImage:[[asset defaultRepresentation] fullScreenImage]];
+                
+            } else {
+                 image = [UIImage imageForAsset:asset maxPixelSize:_libraryMaxImageSize];
+            }
             
             if ( !weakSelf.useCameraSegue ) {
                 if ( [weakSelf.delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
