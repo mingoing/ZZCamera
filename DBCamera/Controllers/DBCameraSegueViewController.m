@@ -35,8 +35,6 @@ static const CGSize kFilterCellSize = { 75, 90 };
     CGRect _pFrame, _lFrame;
 }
 
-@property (nonatomic, strong) UIView *navigationBar, *bottomBar;
-@property (nonatomic, strong) UIButton *useButton, *retakeButton, *cropButton;
 @property (nonatomic, strong) DBCameraLoadingView *loadingView;
 @end
 
@@ -130,8 +128,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
 
 - (void) createInterface
 {
-    CGFloat viewHeight = CGRectGetHeight([[UIScreen mainScreen] bounds]) - 64 - 40;
-    _cropView = [[DBCameraCropView alloc] initWithFrame:(CGRect){ 0, 64, [[UIScreen mainScreen] bounds].size.width, viewHeight }];
+    CGFloat viewHeight = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+    _cropView = [[DBCameraCropView alloc] initWithFrame:(CGRect){ 0, 0, [[UIScreen mainScreen] bounds].size.width, viewHeight }];
 
     [_cropView setHidden:YES];
     
@@ -215,7 +213,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
     if ( !_navigationBar ) {
         _navigationBar = [[UIView alloc] initWithFrame:(CGRect){ 0, 0, [[UIScreen mainScreen] bounds].size.width, 64 }];
 
-        [_navigationBar setBackgroundColor:[UIColor blackColor]];
+        [_navigationBar setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
         [_navigationBar setUserInteractionEnabled:YES];
         [_navigationBar addSubview:self.useButton];
         [_navigationBar addSubview:self.retakeButton];
@@ -231,7 +229,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
     if ( !_bottomBar ) {
         _bottomBar = [[UIView alloc] initWithFrame:(CGRect){ 0, CGRectGetHeight([[UIScreen mainScreen] bounds]) - 40, [[UIScreen mainScreen] bounds].size.width, 40 }];
 
-        [_bottomBar setBackgroundColor:[UIColor blackColor]];
+        [_bottomBar setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
         [_bottomBar setHidden:YES];
         
         if ( !_forceQuadCrop ) {
@@ -294,7 +292,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     [button setBackgroundColor:[UIColor clearColor]];
     [button setTitleColor:self.tintColor forState:UIControlStateNormal];
-    button.titleLabel.font = [UIFont systemFontOfSize:12];
+    button.titleLabel.font = [UIFont systemFontOfSize:15];
     
     return button;
 }

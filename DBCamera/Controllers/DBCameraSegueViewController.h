@@ -41,6 +41,9 @@
  */
 @property (nonatomic, readonly) NSIndexPath *selectedFilterIndex;
 
+@property (nonatomic, strong) UIButton *useButton, *retakeButton, *cropButton;
+@property (nonatomic, strong) UIView *navigationBar, *bottomBar;
+
 /**
  *  The init method with the captured image and thumb
  *
