@@ -14,11 +14,13 @@
 {
     self = [super init];
     if ( self ) {
-        [self setItemSize:(CGSize){ 106, 106 }];
+        CGSize msize = [[UIScreen mainScreen] bounds].size;
+        float width = msize.width/3-1.5;
+        [self setItemSize:(CGSize){ width, width }];
         [self setScrollDirection:UICollectionViewScrollDirectionVertical];
         [self setSectionInset:UIEdgeInsetsZero];
-        [self setMinimumLineSpacing:1];
-        [self setMinimumInteritemSpacing:1];
+        [self setMinimumLineSpacing:2];
+        [self setMinimumInteritemSpacing:2];
     }
     return self;
 }
